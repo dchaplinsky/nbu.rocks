@@ -9,10 +9,11 @@ import tempfile
 from collections import OrderedDict
 
 usage = """\
-usage: parser.py mask output_file
+usage: extract_to_json.py pdf_mask xlsx_stats output_dir
 
-    source_filename - mask to find pdf files with info
-    output_file - path to json file to store an output information
+    pdf_mask - mask to find pdf files with info about licenses and perms
+    xlsx_stats - path to xlsx file with stats about branches
+    output_dir - path to dir to store extracted data in json files
 """
 
 
