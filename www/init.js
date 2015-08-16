@@ -1,5 +1,9 @@
 $(function() {
-    $("#mega-table").DataTable({
+    function format(data) {
+        return "<h1>test</h1>";
+    }
+
+    var table = $("#mega-table").DataTable({
         "processing": true,
         "ajax": {
             "url": "jsons/index.json",
@@ -7,10 +11,11 @@ $(function() {
         },
         "paging": false,
         "autoWidth": false,
+        "fixedHeader": true,
         "columns": [
             {
                 "data": "МФО",
-                "width": "10%",
+                "width": "5%",
                 "render": function(data, type, row, meta) {
                     if (type == "display") {
                         if (row["Код банку"] != "-") {
@@ -22,7 +27,7 @@ $(function() {
             },
             {
                 "data": "Назва банку",
-                "width": "40%"
+                "width": "35%"
             },
             {
                 "data": "Адреса",
@@ -48,16 +53,23 @@ $(function() {
             {
                 "data": "Структура власності",
                 "defaultContent": "",
-                "className": "text-right",
+                "className": "text-center",
                 "render": function(data, type, row, meta) {
                     if (type == "display") {
                         if (data != undefined) {
-                            return '<a href="' + data["Посилання"] + '" target="_blank" title="Станом на: ' + data["Дата"] + '"><i class="glyphicon glyphicon-download-alt"></></span>';
+                            return '<a href="' + data["Посилання"] + '" target="_blank" title="Станом на: ' + data["Дата"] + '"><i class="glyphicon glyphicon-download-alt" /></span>';
                         }
                     }
                     return data
                 }
-            }
+            },
+            {
+                "className": 'details-control text-center',
+                "orderable": false,
+                "data": null,
+                "width": "5%",
+                "defaultContent": '<a href="#"><i class="glyphicon glyphicon-folder-open"></i></a>'
+            }            
         ],
 
         "language": {
@@ -83,5 +95,21 @@ $(function() {
         }
     }).on('draw.dt', function () {
         $('[data-toggle="tooltip"]').tooltip();
+    }).on('click', 'td.details-control a', function (e) {
+        e.preventDefault();
+
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+ 
+        if (row.child.isShown()) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
     });
 });

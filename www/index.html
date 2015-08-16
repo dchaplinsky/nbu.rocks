@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.8/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="fixedHeader.bootstrap.min.css" />
     <style type="text/css">
         blockquote {
             font-size: 0.9em;
@@ -40,6 +41,10 @@
             text-decoration: none;
             border-bottom: 1px dashed #ff7600;
         }
+
+        tr.shown td.details-control .glyphicon::before {
+            color: #ff7600;
+        }        
     </style>
   </head>
 
@@ -67,6 +72,7 @@
                 <th>Адреса</th>
                 <th>Філії</th>
                 <th>Структура</th>
+                <th>Деталі</th>
               </tr>
             </thead>
             <tbody>
@@ -81,6 +87,8 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.8/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.8/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript" src="nunjucks.min.js"></script>    
     <script type="text/javascript" src="init.js"></script>
   </body>
 </html>
