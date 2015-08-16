@@ -6,6 +6,7 @@ import json
 import os.path
 import glob2
 import tempfile
+from time import sleep
 
 import requests
 from openpyxl import load_workbook
@@ -192,6 +193,7 @@ class NBUParser(object):
 
     def parse_ownership(self, mfo):
         url = "http://www.bank.gov.ua/files/Shareholders/{0}/".format(mfo)
+        sleep(1.)
         resp = requests.get(url)
 
         if resp.status_code == 200:
@@ -204,7 +206,7 @@ class NBUParser(object):
         else:
             print("Ownership structure for {0} not found".format(mfo))
 
-        return {}
+        return []
 
     def convert_one(self, fname):
         output_file = tempfile.mktemp(prefix="yes_i_know_you_deprecated")
@@ -271,6 +273,7 @@ class NBUParser(object):
             ind_fname = "{0}.json".format(struct["МФО"])
             index_entry = {
                 "МФО": struct["МФО"],
+                "Деталі": ind_fname,
                 "Назва банку": struct["Ліцензії"][0]["Назва банку"],
                 "Адреса": struct["Ліцензії"][0]["Адреса"],
                 "Код банку": struct.get("Код банку", "-")
