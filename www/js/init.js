@@ -2,7 +2,7 @@ $(function() {
     var table = $("#mega-table").DataTable({
         "processing": true,
         "ajax": {
-            "url": "jsons/index.json",
+            "url": "/jsons/index.json",
             "dataSrc": ""
         },
         "paging": false,
