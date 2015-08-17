@@ -1,3 +1,54 @@
+<div class="row">
+    {% if d["Структурні підрозділи по регіонах"] %}
+    <div class="col-md-6">
+        <h5>Філії по регіонах</h5>
+        <table class="table table-condensed">
+            <tbody>
+                {% for slc in d["Структурні підрозділи по регіонах"]|batch(2) %}
+                <tr>
+                    {% for by_region in slc %}
+                        <th>{{ by_region["Регіон"] }}</th>
+                        <td class="text-right">{{ by_region["Кількість"] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+    {% if d["Структурні підрозділи по датах"] %}
+    <div class="col-md-3">
+        <h5>Філії по роках</h5>
+        <table class="table table-condensed">
+            <tbody>
+                {% for by_date in d["Структурні підрозділи по датах"] %}
+                <tr>
+                    <th>{{ by_date["Дата"] }}</th>
+                    <td class="text-right">{{ by_date["Кількість"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if d["Структура власності"] %}
+    <div class="col-md-3">
+        <h5>Структура власності по роках</h5>
+        <table class="table table-condensed">
+            <tbody>
+                {% for by_date in d["Структура власності"] %}
+                <tr>
+                    <th>На {{ by_date["Дата"] }}</th>
+                    <td class="text-right"><a href="{{ by_date["Посилання"] }}" target="_blank"><i class="glyphicon glyphicon-download-alt" /></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>        
+    </div>
+    {% endif %}
+</div>
+
 {% for l in d["Ліцензії"] %}
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">{{ l["Назва банку"] }} (ЄДРПОУ: {{ l["Код ЄДРПОУ"] }})</h3></div>

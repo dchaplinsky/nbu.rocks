@@ -1,8 +1,4 @@
 $(function() {
-    function format(data) {
-        // return '<table class="table">    <tbody>        <tr>            <td width="7%"></td>            <td width="35%">to</td>            <td width="30%">104</td>            <td width="10%">самий</td>            <td>лучшій</td>            <td width="7%">самолет</td>        </tr>    </tbody></table>';
-    }
-
     var table = $("#mega-table").DataTable({
         "processing": true,
         "ajax": {
@@ -110,7 +106,7 @@ $(function() {
             // Open this row
             $.get("/jsons/" + row.data()["Деталі"], function(data) {
                 row.child(
-                    nunjucks.render('details.nunj', {"d": data}),
+                    nunjucks.render('templates/details.nunj', {"d": data}),
                     "details").show();
                 tr.addClass('shown');
             });
