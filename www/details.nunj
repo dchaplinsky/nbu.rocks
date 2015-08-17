@@ -1,6 +1,6 @@
 {% for l in d["Ліцензії"] %}
     <div class="panel panel-default">
-        <div class="panel-heading">{{ l["Назва банку"] }} (ЄДРПОУ: {{ l["Код ЄДРПОУ"] }})</div>
+        <div class="panel-heading"><h3 class="panel-title">{{ l["Назва банку"] }} (ЄДРПОУ: {{ l["Код ЄДРПОУ"] }})</h3></div>
         <div class="panel-body">
             <p><strong>Адреса: </strong> {{ l["Адреса"] }}</p>
 
@@ -37,6 +37,38 @@
                     </tbody>
                 </table>
             {% endif %}
+
+            {% if l["Види діяльності та фінансові послуги, які здійснюються банком на підставі його повідомлення"] %}
+                <p>
+                    <strong>Види діяльності та фінансові послуги, які здійснюються банком на підставі його повідомлення:</strong>
+                </p>
+                <table class="table">
+                    <tbody>
+                        {% for notification_date, notification_text in l["Види діяльності та фінансові послуги, які здійснюються банком на підставі його повідомлення"] %}
+                        <tr>
+                            <th class="narrow">{{ notification_date }}</th>
+                            <td>{{ notification_text }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            {% for p in l["Дозволи"] %}
+                <p>
+                <strong>Дозвіл: </strong> {{ p["номер дозволу"] }}, від {{ p["від"] }}</p>
+                <strong>Перелік операцій дозволу: </strong>
+                <table class="table">
+                    <tbody>
+                        {% for perm_no, perm_text in p["Перелік операцій дозвола"] %}
+                        <tr>
+                            <th class="narrow">{{ perm_no }}</th>
+                            <td>{{ perm_text }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
         </div>
     </div>
 {% endfor %}

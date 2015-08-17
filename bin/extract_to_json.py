@@ -21,6 +21,9 @@ usage: extract_to_json.py pdf_mask xlsx_stats output_dir
 """
 
 JSON_SETTINGS = dict(ensure_ascii=False, indent=4, sort_keys=True)
+NOTIFICATION_TEXT = (
+    "Види діяльності та фінансові послуги, які здійснюються банком "
+    "на підставі його повідомлення")
 
 
 def slice_and_dice(text, sections):
@@ -47,7 +50,7 @@ def get_sections_as_dict(text, sections):
 
 
 def parse_numbered_list(lines):
-    first_column_len = len(re.match("(\s*\w+\s*)", lines[0]).group(0))
+    first_column_len = len(re.match("(\s*[\w\.]+\s*)", lines[0]).group(0))
 
     accum = []
 
@@ -55,7 +58,7 @@ def parse_numbered_list(lines):
     prev_desc = None
 
     for l in lines:
-        code, desc = re.match("(\s*\w+\s*)(.*)$", l).groups()
+        code, desc = re.match("(\s*[\w\.]+\s*)(.*)$", l).groups()
         if len(code) > first_column_len:
             desc = code + desc
             code = ""
@@ -189,6 +192,15 @@ class NBUParser(object):
         entry[lic_type] = self.parse_main_license(licenses[0])
         entry["Дозволи"] = list(map(self.parse_permissions, licenses[1:]))
 
+        if NOTIFICATION_TEXT + ":" in entry:
+            notification_entries = (
+                "  " + entry[NOTIFICATION_TEXT + ":"]).splitlines()
+
+            entry[NOTIFICATION_TEXT] = parse_numbered_list(
+                notification_entries
+            )
+            del entry[NOTIFICATION_TEXT + ":"]
+
         return entry
 
     def parse_ownership(self, mfo):
@@ -233,7 +245,8 @@ class NBUParser(object):
                           "Адреса", "Банківська ліцензія", "Дата відкликання",
                           "Підстави прийняття рішення",
                           "Ліцензія санаційного банку",
-                          "Ліцензія санаційного банку"]
+                          "Ліцензія санаційного банку",
+                          NOTIFICATION_TEXT + ":"]
 
         expanded_entries = []
 
