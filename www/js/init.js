@@ -7,6 +7,10 @@ $(function() {
         },
         "paging": false,
         "autoWidth": false,
+        "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+          $(nRow).addClass("main-row");
+          return nRow;
+        },
         "fixedHeader": true,
         "columns": [
             {
@@ -64,7 +68,7 @@ $(function() {
                 "orderable": false,
                 "data": null,
                 "width": "7%",
-                "defaultContent": '<a href="#"><i class="glyphicon glyphicon-folder-open"></i></a>'
+                "defaultContent": '<a href="#" class="details-link"><i class="glyphicon glyphicon-folder-open"></i></a>'
             }            
         ],
 
@@ -91,10 +95,14 @@ $(function() {
         }
     }).on('draw.dt', function () {
         $('[data-toggle="tooltip"]').tooltip();
-    }).on('click', 'tr:not(.details)', function (e) {
+    }).on('click', 'a', function (e) {
+        if (!$(this).hasClass("details-link")) {
+            e.stopPropagation();
+        }
+    }).on('click', 'tr.main-row', function (e) {
         e.preventDefault();
 
-        var tr = $(this);
+        var tr = $(this).closest("tr");
         var row = table.row(tr);
  
         if (row.child.isShown()) {
