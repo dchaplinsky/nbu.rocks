@@ -1,6 +1,6 @@
 $(function() {
     function format(data) {
-        return "<h1>test</h1>";
+        // return '<table class="table">    <tbody>        <tr>            <td width="7%"></td>            <td width="35%">to</td>            <td width="30%">104</td>            <td width="10%">самий</td>            <td>лучшій</td>            <td width="7%">самолет</td>        </tr>    </tbody></table>';
     }
 
     var table = $("#mega-table").DataTable({
@@ -15,7 +15,7 @@ $(function() {
         "columns": [
             {
                 "data": "МФО",
-                "width": "5%",
+                "width": "7%",
                 "render": function(data, type, row, meta) {
                     if (type == "display") {
                         if (row["Код банку"] != "-") {
@@ -67,7 +67,7 @@ $(function() {
                 "className": 'details-control text-center',
                 "orderable": false,
                 "data": null,
-                "width": "5%",
+                "width": "7%",
                 "defaultContent": '<a href="#"><i class="glyphicon glyphicon-folder-open"></i></a>'
             }            
         ],
@@ -95,10 +95,10 @@ $(function() {
         }
     }).on('draw.dt', function () {
         $('[data-toggle="tooltip"]').tooltip();
-    }).on('click', 'td.details-control a', function (e) {
+    }).on('click', 'tr:not(.details)', function (e) {
         e.preventDefault();
 
-        var tr = $(this).closest('tr');
+        var tr = $(this);
         var row = table.row(tr);
  
         if (row.child.isShown()) {
@@ -108,8 +108,12 @@ $(function() {
         }
         else {
             // Open this row
-            row.child(format(row.data())).show();
-            tr.addClass('shown');
+            $.get("/jsons/" + row.data()["Деталі"], function(data) {
+                row.child(
+                    nunjucks.render('details.nunj', {"d": data}),
+                    "details").show();
+                tr.addClass('shown');
+            });
         }
     });
 });
