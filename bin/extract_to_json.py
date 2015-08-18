@@ -137,7 +137,7 @@ class NBUParser(object):
 
             if all([code, name, mfo]):
                 values = map(lambda x: x.value if x.value else 0,
-                             r[5:5 + len(regions)])
+                             r[4:4 + len(regions)])
 
                 by_region = [
                     {
