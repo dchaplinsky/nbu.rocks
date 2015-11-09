@@ -127,6 +127,20 @@ output += runtime.suppressValue(runtime.memberLookup((t_20),"Код ЄДРПОУ
 output += ")</h3></div>\n        <div class=\"panel-body\">\n            <p><strong>Адреса: </strong> ";
 output += runtime.suppressValue(runtime.memberLookup((t_20),"Адреса", env.opts.autoescape), env.opts.autoescape);
 output += "</p>\n\n            ";
+if(runtime.memberLookup((t_20),"Дата відкликання", env.opts.autoescape)) {
+output += "\n                <p class=\"important\">\n                    <strong>Дата відкликання: </strong> ";
+output += runtime.suppressValue(runtime.memberLookup((t_20),"Дата відкликання", env.opts.autoescape), env.opts.autoescape);
+output += "\n                    <br/>\n                    ";
+if(runtime.memberLookup((t_20),"Підстави прийняття рішення", env.opts.autoescape)) {
+output += "\n                    <strong>Підстави прийняття рішення: </strong> ";
+output += runtime.suppressValue(runtime.memberLookup((t_20),"Підстави прийняття рішення", env.opts.autoescape), env.opts.autoescape);
+output += "\n                    ";
+;
+}
+output += "\n                </p>\n            ";
+;
+}
+output += "\n\n            ";
 if(runtime.memberLookup((t_20),"Банківська ліцензія", env.opts.autoescape)) {
 output += "\n                <p>\n                <strong>Банківська ліцензія: </strong> ";
 output += runtime.suppressValue(runtime.memberLookup((runtime.memberLookup((t_20),"Банківська ліцензія", env.opts.autoescape)),"номер ліцензії", env.opts.autoescape), env.opts.autoescape);
