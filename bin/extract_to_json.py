@@ -58,7 +58,11 @@ def parse_numbered_list(lines):
     prev_desc = None
 
     for l in lines:
-        code, desc = re.match("(\s*[\w\.]+\s*)(.*)$", l).groups()
+        try:
+            code, desc = re.match("(\s*[\w\.]+\s*)(.*)$", l).groups()
+        except Exception:
+            print("Cannot parse line %s " % l)
+
         if len(code) > first_column_len:
             desc = code + desc
             code = ""
@@ -94,7 +98,7 @@ class NBUParser(object):
         sheetnames = wb.sheetnames
         dates = ("01.01.2008", "01.01.2009", "01.01.2010", "01.01.2011",
                  "01.01.2012", "01.01.2013", "01.01.2014", "01.01.2015",
-                 "01.07.2015", "01.10.2015")
+                 "01.01.2016", "01.04.2016", "01.07.2016")
 
         regions = (
             "Вінніцька", "Волинська", "Дніпропетровська", "Донецька",
@@ -103,7 +107,7 @@ class NBUParser(object):
             "Луганська", "Львівська", "Миколаївська", "Одеська",
             "Полтавська", "Рівненська", "Сумська", "Тернопільська",
             "Харківська", "Херсонська", "Хмельницька", "Черкаська",
-            "Чернігівська", "Чернівецька"
+            "Чернігівська", "Чернівецька", "АРК", "Севастополь"
         )
 
         ws = wb[sheetnames[0]]
@@ -111,10 +115,10 @@ class NBUParser(object):
             if i < 6:
                 continue
 
-            code, name, mfo = r[0].value, r[1].value, r[2].value
+            code, name, mfo = r[0].value, r[1].value, r[3].value
 
             if all([code, name, mfo]):
-                values = map(lambda x: x.value if x.value else 0, r[3:13])
+                values = map(lambda x: x.value if x.value else 0, r[4:14])
 
                 by_date = [
                     {
@@ -137,7 +141,7 @@ class NBUParser(object):
 
             if all([code, name, mfo]):
                 values = map(lambda x: x.value if x.value else 0,
-                             r[4:4 + len(regions)])
+                             r[5:5 + len(regions)])
 
                 by_region = [
                     {
@@ -145,6 +149,9 @@ class NBUParser(object):
                         "Кількість": value,
                     }
                     for region, value in zip(regions, values)]
+
+                if mfo not in self.bank_stats:
+                    self.bank_stats[mfo] = {}
 
                 self.bank_stats[mfo][
                     "Структурні підрозділи по регіонах"] = by_region
@@ -214,7 +221,7 @@ class NBUParser(object):
                     "Дата": x[1],
                     "Посилання": url + x[0]
                 } for x in re.findall(
-                    "([\d_]*\.pdf).*(\d{4}\.\d{2}\.\d{2})", resp.text)]
+                    "([\d_]*\.pdf).*\s*(\d{4}\.\d{2}\.\d{2})", resp.text)]
         else:
             print("Ownership structure for {0} not found".format(mfo))
 
@@ -255,8 +262,9 @@ class NBUParser(object):
                 lambda x: self.expand_licenses(get_sections_as_dict(
                     "Назва банку {0}".format(x), entry_sections)),
                 entries))
-        except:
-            print(fname)
+        except Exception as e:
+            print("During the processing of %s an exception %s happened" % (
+                fname, e))
 
         mfo, _ = os.path.splitext(os.path.basename(fname))
         mfo = int(mfo)
@@ -283,28 +291,32 @@ class NBUParser(object):
         index = []
 
         for struct in self.accum:
-            ind_fname = "{0}.json".format(struct["МФО"])
-            index_entry = {
-                "МФО": struct["МФО"],
-                "Деталі": ind_fname,
-                "Назва банку": struct["Ліцензії"][0]["Назва банку"],
-                "Адреса": struct["Ліцензії"][0]["Адреса"],
-                "Код банку": struct.get("Код банку", "-")
-            }
+            try:
+                ind_fname = "{0}.json".format(struct["МФО"])
+                index_entry = {
+                    "МФО": struct["МФО"],
+                    "Деталі": ind_fname,
+                    "Назва банку": struct["Ліцензії"][0]["Назва банку"],
+                    "Адреса": struct["Ліцензії"][0]["Адреса"],
+                    "Код банку": struct.get("Код банку", "-")
+                }
 
-            if "Структурні підрозділи по датах" in struct:
-                index_entry.update({
-                    "Філії": struct["Структурні підрозділи по датах"][-1]
-                })
+                if "Структурні підрозділи по датах" in struct:
+                    index_entry.update({
+                        "Філії": struct["Структурні підрозділи по датах"][-1]
+                    })
 
-            if struct["Структура власності"]:
-                index_entry.update({
-                    "Структура власності": struct["Структура власності"][0]
-                })
-            index.append(index_entry)
+                if struct["Структура власності"]:
+                    index_entry.update({
+                        "Структура власності": struct["Структура власності"][0]
+                    })
+                index.append(index_entry)
 
-            with open(os.path.join(out_dir, ind_fname), "w") as fp:
-                json.dump(struct, fp, **JSON_SETTINGS)
+                with open(os.path.join(out_dir, ind_fname), "w") as fp:
+                    json.dump(struct, fp, **JSON_SETTINGS)
+            except Exception as e:
+                print("During the processing of %s an exception %s happened" % (
+                    ind_fname, e))
 
         with open(os.path.join(out_dir, "index.json"), "w") as fp:
             json.dump(index, fp, **JSON_SETTINGS)
